@@ -31,14 +31,15 @@ int main(int argc, char *argv[])
 
     int sockfd, newsockfd, portno, n;
     struct sockaddr_in serv_addr, cli_addr;
-    socklen_t clilen char buffer[256];
+    socklen_t clilen;
+    char buffer[256];
 
     portno = atoi(argv[1]);
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
         error("Error opening socket");
 
-    serv_addr.sin_fimaly = AF_INET;
+    serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
     serv_addr.sin_port = htons(portno);
 
@@ -55,7 +56,13 @@ int main(int argc, char *argv[])
 
     int num1, num2, ans, choice;
 
-s:
+S:
+    n = write(newsockfd, "\n1. Addition \n2. Substraction \n3. Multiplication \n4. Devision \n5. Exit\n", sizeof("\n1. Addition \n2. Substraction \n3. Multiplication \n4. Devision \n5. Exit\n"));
+    if (n < 0)
+        error("Error writting to socket");
+    read(newsockfd, &choice, sizeof(choice));
+    printf("Client - Choice is %d\n", choice);
+    
     n = write(newsockfd, "Enter the number 1: ", sizeof("Enter the number 1: "));
     if (n < 0)
         error("Error writting to socket");
@@ -67,13 +74,7 @@ s:
         error("Error writting to socket");
     read(newsockfd, &num2, sizeof(int));
     printf("Client - Number 2 is %d\n", num2);
-
-    n = write(newsockfd, "1. Addition \n2. Substraction \n3. Multiplication \n4. Devision \n5. Exit\n", sizeof("1. Addition \n2. Substraction \n3. Multiplication \n4. Devision \n5. Exit\n"));
-    if (n < 0)
-        error("Error writting to socket");
-    read(newsockfd, &choice, sizeof(choice));
-    printf("Client - Choice is %d\n", choice);
-
+	
     switch (choice)
     {
     case 1:
@@ -92,6 +93,7 @@ s:
         goto Q;
         break;
     }
+    
 
     write(newsockfd, &ans, sizeof(int));
     if (choice != 5)
